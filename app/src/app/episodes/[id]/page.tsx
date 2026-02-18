@@ -17,6 +17,7 @@ import {
   Copy,
 } from "lucide-react";
 import { episodes } from "@/lib/data";
+import ShortenEpisode from "@/components/ShortenEpisode";
 
 const categoryStyle: Record<string, string> = {
   leadership: "bg-cic-teal-subtle text-cic-teal border border-cic-teal/10",
@@ -89,6 +90,15 @@ export default async function EpisodeDetailPage({
                     {tag}
                   </span>
                 ))}
+              </div>
+              <div className="mt-4">
+                <ShortenEpisode
+                  episodeTitle={episode.title}
+                  originalDuration={episode.duration}
+                  executiveSummary={insights.executiveSummary}
+                  keyInsights={insights.keyInsights}
+                  actionItems={insights.actionItems}
+                />
               </div>
             </div>
           </div>
