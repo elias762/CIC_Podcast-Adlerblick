@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+:root {
+  --cic-teal: #035f6a;
+  --cic-teal-light: #0a7c89;
+  --cic-teal-dark: #024850;
+  --cic-teal-subtle: #eef6f7;
+  --cic-coral: #cc8b6e;
+  --cic-coral-light: #d9a78f;
+  --cic-coral-subtle: #faf5f2;
+  --cic-bg: #f5f5f7;
+  --cic-surface: #ffffff;
+  --cic-surface-elevated: #ffffff;
+  --cic-text: #1d1d1f;
+  --cic-text-secondary: #6e6e73;
+  --cic-text-tertiary: #aeaeb2;
+  --cic-border: #e8e8ed;
+  --cic-border-strong: #d2d2d7;
+  --cic-separator: #f0f0f5;
+  --cic-sidebar-bg: rgba(246, 246, 248, 0.72);
+  --background: #f5f5f7;
+  --foreground: #1d1d1f;
+
+  /* Apple-style shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 0.5px 1px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.06);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cic-teal: var(--cic-teal);
+  --color-cic-teal-light: var(--cic-teal-light);
+  --color-cic-teal-dark: var(--cic-teal-dark);
+  --color-cic-teal-subtle: var(--cic-teal-subtle);
+  --color-cic-coral: var(--cic-coral);
+  --color-cic-coral-light: var(--cic-coral-light);
+  --color-cic-coral-subtle: var(--cic-coral-subtle);
+  --color-cic-bg: var(--cic-bg);
+  --color-cic-surface: var(--cic-surface);
+  --color-cic-surface-elevated: var(--cic-surface-elevated);
+  --color-cic-text: var(--cic-text);
+  --color-cic-text-secondary: var(--cic-text-secondary);
+  --color-cic-text-tertiary: var(--cic-text-tertiary);
+  --color-cic-border: var(--cic-border);
+  --color-cic-border-strong: var(--cic-border-strong);
+  --color-cic-separator: var(--cic-separator);
+  --color-cic-sidebar-bg: var(--cic-sidebar-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--cic-bg);
+  color: var(--cic-text);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.011em;
+}
+
+/* Apple-style scrollbar — auto-hiding */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 100px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--cic-teal) 15%, transparent);
+}
+
+/* Apple spring-like transition */
+* {
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Apple-style card with subtle border + shadow */
+.apple-card {
+  background: var(--cic-surface);
+  border-radius: 16px;
+  border: 0.5px solid var(--cic-border);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.apple-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+/* Frosted glass toolbar/header */
+.apple-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Apple vibrancy sidebar */
+.apple-vibrancy {
+  background: rgba(246, 246, 248, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Subtle focus ring, Apple-style */
+.apple-focus {
+  outline: none;
+}
+.apple-focus:focus-visible {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cic-teal) 20%, transparent);
+}
