@@ -3,17 +3,15 @@
 import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Mail,
   Copy,
   Download,
-  ExternalLink,
   Mic,
   Users,
   Send,
   Check,
-  X,
   Building2,
   Clock,
   ChevronDown,
@@ -24,9 +22,9 @@ import {
   Circle,
 } from "lucide-react";
 import { episodes, crmContacts } from "@/lib/data";
-import { CrmContact } from "@/lib/types";
+import type { CrmContact } from "@/lib/types";
 
-const statusConfig = {
+const statusConfig: Record<CrmContact["status"], { label: string; color: string; icon: React.ElementType }> = {
   new: { label: "Neu", color: "bg-blue-50 text-blue-600 border-blue-100", icon: Circle },
   contacted: { label: "Kontaktiert", color: "bg-emerald-50 text-emerald-600 border-emerald-100", icon: UserCheck },
   scheduled: { label: "Geplant", color: "bg-amber-50 text-amber-600 border-amber-100", icon: CalendarClock },
@@ -34,16 +32,13 @@ const statusConfig = {
 
 function ContactRow({
   contact,
-  episodeTitle,
+  isSent,
   onSend,
-  sentIds,
 }: {
   contact: CrmContact;
-  episodeTitle: string;
+  isSent: boolean;
   onSend: (contactId: string) => void;
-  sentIds: Set<string>;
 }) {
-  const isSent = sentIds.has(contact.id);
   const st = statusConfig[contact.status];
   const StIcon = st.icon;
 
@@ -95,34 +90,35 @@ function ContactRow({
 function NewsletterCard({ episode }: { episode: (typeof episodes)[0] }) {
   const [expanded, setExpanded] = useState(false);
   const [showContacts, setShowContacts] = useState(true);
-  const [sentIds, setSentIds] = useState<Set<string>>(new Set());
-  const [showSendAll, setShowSendAll] = useState(false);
+  const [sentList, setSentList] = useState<string[]>([]);
+  const [isSending, setIsSending] = useState(false);
 
   const matchedContacts = crmContacts.filter((c) =>
     c.suggestedEpisodes.includes(episode.id)
   );
 
-  const handleSend = (contactId: string) => {
-    setSentIds((prev) => new Set([...prev, contactId]));
-  };
+  const handleSend = useCallback((contactId: string) => {
+    setSentList((prev) => (prev.includes(contactId) ? prev : [...prev, contactId]));
+  }, []);
 
-  const handleSendAll = () => {
-    setShowSendAll(true);
-    const unsent = matchedContacts.filter((c) => !sentIds.has(c.id));
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < unsent.length) {
-        setSentIds((prev) => new Set([...prev, unsent[i].id]));
-        i++;
+  const handleSendAll = useCallback(() => {
+    setIsSending(true);
+    const ids = matchedContacts.map((c) => c.id);
+    let index = 0;
+    const tick = () => {
+      if (index < ids.length) {
+        setSentList((prev) => (prev.includes(ids[index]) ? prev : [...prev, ids[index]]));
+        index++;
+        setTimeout(tick, 300);
       } else {
-        clearInterval(interval);
-        setTimeout(() => setShowSendAll(false), 500);
+        setIsSending(false);
       }
-    }, 300);
-  };
+    };
+    tick();
+  }, [matchedContacts]);
 
-  const allSent = matchedContacts.every((c) => sentIds.has(c.id));
-  const sentCount = matchedContacts.filter((c) => sentIds.has(c.id)).length;
+  const sentCount = sentList.length;
+  const allSent = matchedContacts.length > 0 && matchedContacts.every((c) => sentList.includes(c.id));
 
   return (
     <div className="apple-card overflow-hidden">
@@ -209,14 +205,14 @@ function NewsletterCard({ episode }: { episode: (typeof episodes)[0] }) {
           {showContacts && matchedContacts.length > 0 && !allSent && (
             <button
               onClick={handleSendAll}
-              disabled={showSendAll}
+              disabled={isSending}
               className="flex items-center gap-1.5 rounded-lg bg-cic-teal px-3.5 py-[5px] text-[11px] font-semibold text-white hover:bg-cic-teal-light transition-all shadow-[0_1px_3px_rgba(3,95,106,0.3)] disabled:opacity-50"
             >
               <Send className="h-3 w-3" />
-              An alle senden
+              {isSending ? "Wird gesendet..." : "An alle senden"}
             </button>
           )}
-          {allSent && matchedContacts.length > 0 && (
+          {allSent && (
             <span className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
               <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
               Alle gesendet
@@ -230,9 +226,8 @@ function NewsletterCard({ episode }: { episode: (typeof episodes)[0] }) {
               <ContactRow
                 key={contact.id}
                 contact={contact}
-                episodeTitle={episode.title}
+                isSent={sentList.includes(contact.id)}
                 onSend={handleSend}
-                sentIds={sentIds}
               />
             ))}
           </div>
